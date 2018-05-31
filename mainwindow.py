@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(585, 574)
+        MainWindow.resize(606, 620)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -24,6 +24,13 @@ class Ui_MainWindow(object):
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.verticalLayout.addWidget(self.tableWidget)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout.addWidget(self.label_2)
+        self.filterBox = QtWidgets.QComboBox(self.centralwidget)
+        self.filterBox.setObjectName("filterBox")
+        self.verticalLayout.addWidget(self.filterBox)
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -35,7 +42,7 @@ class Ui_MainWindow(object):
         self.startbtn.setObjectName("startbtn")
         self.verticalLayout.addWidget(self.startbtn)
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -50,6 +57,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Video Creator"))
         self.directorybtn.setText(_translate("MainWindow", "Select Directory"))
+        self.label_2.setText(_translate("MainWindow", "Filter"))
         self.label.setText(_translate("MainWindow", "Frames Per Second"))
         self.startbtn.setText(_translate("MainWindow", "Start"))
 
