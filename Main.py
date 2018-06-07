@@ -96,6 +96,10 @@ class LinearVideoApp(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         if filtersize != 'Raw':
             for key in self.data_dict:
                 self.data_dict[key]['Acceleration']['RawYData'] = filterProcessing(self.data_dict[key]['Acceleration']['RawYData'],int(filtersize),self.data_dict[key]['Acceleration']['Sample Rate'])            
+        numoftests = len(self.data_dict)
+        increm = 100/(numoftests)
+        complete = increm
+        self.progressBar.setValue(complete)
         for key in self.data_dict:
             timeIdx = []
             
@@ -111,23 +115,46 @@ class LinearVideoApp(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                 timeIdx.append(idx)
             start = timeIdx[0]
             framecount = 1
+            imglist = []
+            minDisp = self.data_dict[key]['Displacement']['RawYData'][timeIdx[0]]
+            maxDisp = max(self.data_dict[key]['Displacement']['RawYData'])
+            minAccel = min(self.data_dict[key]['Acceleration']['RawYData'][timeIdx[0]:timeIdx[-1]])
+            maxAccel = max(self.data_dict[key]['Acceleration']['RawYData'][timeIdx[0]:timeIdx[-1]])
+            k = 0
             for i in timeIdx:
                 plt.plot(self.data_dict[key]['Displacement']['RawYData'][start:i],self.data_dict[key]['Acceleration']['RawYData'][start:i])
                 title = str(key)
                 title = title.replace("\r","")
-                plt.title(title)
+                plt.title(title + " " + str(timeArray[k]) + " (msec)")
                 plt.xlabel('Displacement [mm]')
                 plt.ylabel('Acceleration [g]')
-                plt.savefig(savedirectory[0] + title +' Frame_' + str(framecount))
-
-                height, width, layers = cv2.imread(savedirectory[0] + title +' Frame_' + str(framecount)+'.png')
-                video = cv2.VideoWriter(title,-1,1,(width,height))
-                video.write(cv2.imread(savedirectory[0] + title +' Frame_' + str(framecount)))
-                os.remove(savedirectory[0] + title +' Frame_' + str(framecount)+'.png')
-                plt.close()
-                cv2.destroyAllWindows()
-                video.release()
+                plt.xlim(minDisp,maxDisp+25)
+                plt.ylim(minAccel,maxAccel+3)
+                plt.savefig(savedirectory[0] + title +' Frame_' + str(framecount)+'.png')
+                imglist.append(savedirectory[0] + title +' Frame_' + str(framecount)+'.png')
+                
+                
                 framecount += 1
+                k += 1
+                
+#                height, width, layers = cv2.imread(savedirectory[0] + title +' Frame_' + str(framecount)+'.png')
+#                video = cv2.VideoWriter(title,-1,1,(width,height))
+#                video.write(cv2.imread(savedirectory[0] + title +' Frame_' + str(framecount)))
+                plt.close()
+            img = cv2.imread(imglist[0])
+            height, width, layers = img.shape
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            video = cv2.VideoWriter(savedirectory[0] + title +'.avi',fourcc,25,(width,height))
+            for i in imglist:
+                curimg = cv2.imread(i)
+                video.write(curimg)
+                os.remove(i)                                
+            video.release()
+            complete += increm
+            self.progressBar.setValue(complete)
+        cv2.destroyAllWindows()
+            
+                
                 
 def main():
     app = QtWidgets.QApplication(sys.argv)
